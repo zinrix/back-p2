@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reservas de Habitaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container my-4">
+        <h1 class="text-center mb-4">Sistema de Reservas de Habitaciones</h1>
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="reservation-tab" data-bs-toggle="tab" data-bs-target="#reservation" type="button" role="tab" aria-controls="reservation" aria-selected="true">Reservar Habitación</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" role="tab" aria-controls="list" aria-selected="false">Lista de Reservas</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <!-- Reservar Habitación Tab -->
+            <div class="tab-pane fade show active" id="reservation" role="tabpanel" aria-labelledby="reservation-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Buscar Habitaciones Disponibles</h5>
+                        
+                        <!-- Search Form -->
+                        <form id="searchForm" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="hotel" class="form-label">Hotel</label>
+                                <select class="form-select" id="hotel" required>
+                                    <option value="" selected disabled>Seleccionar Hotel</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="capacity" class="form-label">Capacidad (personas)</label>
+                                <input type="number" class="form-control" id="capacity" min="1" value="1">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="checkIn" class="form-label">Fecha de Ingreso</label>
+                                <input type="date" class="form-control" id="checkIn" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="checkOut" class="form-label">Fecha de Salida</label>
+                                <input type="date" class="form-control" id="checkOut" required>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Buscar Habitaciones</button>
+                            </div>
+                        </form>
+                        
+                        <!-- Available Rooms -->
+                        <div id="availableRooms" class="mt-4">
+                            <h5>Habitaciones Disponibles</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Número</th>
+                                            <th>Piso</th>
+                                            <th>Capacidad</th>
+                                            <th>Características</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="roomsTable">
+                                        <!-- Rooms will be added here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Info Form -->
+                        <div id="customerForm" class="mt-4 d-none">
+                            <h5>Información del Cliente</h5>
+                            <form id="bookingForm" class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="cedula" class="form-label">Cédula</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="cedula" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="searchCustomer">Buscar</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="guests" class="form-label">Cantidad de Personas</label>
+                                    <input type="number" class="form-control" id="guests" min="1" value="1" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="nombre" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="apellido" class="form-label">Apellido</label>
+                                    <input type="text" class="form-control" id="apellido" required>
+                                </div>
+                                <input type="hidden" id="selectedRoom">
+                                <div class="col-12 mt-3">
+                                    <button type="submit" class="btn btn-success">Confirmar Reserva</button>
+                                    <button type="button" class="btn btn-secondary" id="cancelBooking">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lista de Reservas Tab -->
+            <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Listar Reservas</h5>
+                        
+                        <!-- Filter Form -->
+                        <form id="filterForm" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="filterHotel" class="form-label">Hotel</label>
+                                <select class="form-select" id="filterHotel" required>
+                                    <option value="" selected disabled>Seleccionar Hotel</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="filterClient" class="form-label">Cliente (Cédula)</label>
+                                <input type="text" class="form-control" id="filterClient">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="filterCheckIn" class="form-label">Fecha de Ingreso</label>
+                                <input type="date" class="form-control" id="filterCheckIn" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="filterCheckOut" class="form-label">Fecha de Salida</label>
+                                <input type="date" class="form-control" id="filterCheckOut">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Filtrar Reservas</button>
+                            </div>
+                        </form>
+                        
+                        <!-- Reservations List -->
+                        <div id="reservationsList" class="mt-4">
+                            <h5>Reservas</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Hotel</th>
+                                            <th>Habitación</th>
+                                            <th>Piso</th>
+                                            <th>Cliente</th>
+                                            <th>Ingreso</th>
+                                            <th>Salida</th>
+                                            <th>Personas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reservationsTable">
+                                        <!-- Reservations will be added here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast for notifications -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
+        <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toastTitle">Notificación</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                <!-- Notification message will be shown here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
