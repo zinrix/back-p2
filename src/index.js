@@ -5,13 +5,13 @@ const cors = require('cors');
 const path = require('path');
 const { testConnection, syncDatabase } = require('./models');
 
-// Import routes
+
 const hotelRoutes = require('./routes/hotelRoutes');
 const habitacionRoutes = require('./routes/habitacionRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const reservaRoutes = require('./routes/reservaRoutes');
 
-// Initialize express app
+// inicializar express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -35,26 +35,23 @@ app.use('/api/habitaciones', habitacionRoutes);
 app.use('/api/clientes', clienteRoutes);
 app.use('/api/reservas', reservaRoutes);
 
-// Default route for the frontend
+// ruta para el frontend
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Initialize database and start server
 const startServer = async () => {
   try {
-    // Test database connection
     await testConnection();
     
-    // Sync database models (set force to true only in development to reset database)
+    // Sincronizar los modelos de base de datos
     await syncDatabase(false);
     
-    // Start server
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      console.log(`El servidor esta corriendo en el puerto ${PORT}`);
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('Error al inciar el servidor:', error);
     process.exit(1);
   }
 };
