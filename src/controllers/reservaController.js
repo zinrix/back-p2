@@ -1,12 +1,12 @@
 const { Op } = require('sequelize');
 const { Reserva, Hotel, Habitacion, Cliente } = require('../models');
 
-// Log interactions
+
 const logInteraction = (method, message) => {
   console.log(`[${new Date().toISOString()}] [Reserva] [${method}] ${message}`);
 };
 
-// Get all reservations with filtering
+
 const getAllReservas = async (req, res) => {
   try {
     const { hotelId, checkIn: fechaIngreso, checkOut: fechaSalida, cedula } = req.query;
@@ -14,7 +14,7 @@ const getAllReservas = async (req, res) => {
     
     let whereClause = {};
     
-    // Add filters if provided
+    // filtros
     if (hotelId) {
       whereClause.hotelId = hotelId;
     }
@@ -27,13 +27,13 @@ const getAllReservas = async (req, res) => {
       whereClause.fechaSalida = fechaSalida;
     }
     
-    // Find clientId by cedula if provided
+  
     if (cedula) {
       const cliente = await Cliente.findOne({ where: { cedula } });
       if (cliente) {
         whereClause.clienteId = cliente.id;
       } else {
-        // If client doesn't exist, return empty array
+        // Si no existe cliente devuelve un array vacio
         return res.status(200).json([]);
       }
     }
@@ -59,11 +59,11 @@ const getAllReservas = async (req, res) => {
   }
 };
 
-// Get reservation by ID
+
 const getReservaById = async (req, res) => {
   try {
     const { id } = req.params;
-    logInteraction('GET', `Getting reservation with ID: ${id}`);
+    logInteraction('GET', `Obtener reserva con ID: ${id}`);
     
     const reserva = await Reserva.findByPk(id, {
       include: [
@@ -74,8 +74,8 @@ const getReservaById = async (req, res) => {
     });
     
     if (!reserva) {
-      logInteraction('GET', `Reservation not found with ID: ${id}`);
-      return res.status(404).json({ message: 'Reservation not found' });
+      logInteraction('GET', `Reserva no encontrada con ID: ${id}`);
+      return res.status(404).json({ message: 'Reserva no encontrada' });
     }
     
     res.status(200).json(reserva);
@@ -85,23 +85,22 @@ const getReservaById = async (req, res) => {
   }
 };
 
-// Get or create a client by cedula
+
 const getOrCreateCliente = async (cedula, nombre, apellido) => {
   try {
-    // Try to find the client first
+
     let cliente = await Cliente.findOne({ where: { cedula } });
     
     if (!cliente) {
-      // If client doesn't exist, create a new one
-      logInteraction('POST', `Creating new client with cedula: ${cedula}`);
+
+      logInteraction('POST', `Creando nuevo cliente con cedula: ${cedula}`);
       cliente = await Cliente.create({
         cedula,
         nombre,
         apellido
       });
     } else if (nombre && apellido && (cliente.nombre !== nombre || cliente.apellido !== apellido)) {
-      // If client exists but data has changed, update the client
-      logInteraction('POST', `Updating client with cedula: ${cedula}`);
+      logInteraction('POST', `Actualizar cliente con cedula: ${cedula}`);
       cliente = await cliente.update({
         nombre,
         apellido
@@ -110,12 +109,12 @@ const getOrCreateCliente = async (cedula, nombre, apellido) => {
     
     return cliente;
   } catch (error) {
-    logInteraction('POST', `Error in getOrCreateCliente: ${error.message}`);
+    logInteraction('POST', `Error getOrCreateCliente: ${error.message}`);
     throw error;
   }
 };
 
-// Create a new reservation
+
 const createReserva = async (req, res) => {
   try {
     const { 
@@ -129,22 +128,22 @@ const createReserva = async (req, res) => {
       cantidadPersonas 
     } = req.body;
     
-    logInteraction('POST', `Creating reservation for room: ${habitacionId} in hotel: ${hotelId}`);
+    logInteraction('POST', `Creando reserva para la habitacion: ${habitacionId} en el hotel: ${hotelId}`);
     
-    // Validate required fields
+
     if (!hotelId || !habitacionId || !cedula || !fechaIngreso || !fechaSalida || !cantidadPersonas) {
-      logInteraction('POST', 'Missing required fields');
+      logInteraction('POST', 'Faltan campos obligatorios');
       return res.status(400).json({ message: 'hotelId, habitacionId, cedula, fechaIngreso, fechaSalida, and cantidadPersonas are required' });
     }
     
-    // Check if hotel exists
+
     const hotel = await Hotel.findByPk(hotelId);
     if (!hotel) {
-      logInteraction('POST', `Hotel not found with ID: ${hotelId}`);
-      return res.status(404).json({ message: 'Hotel not found' });
+      logInteraction('POST', `Hotel no encontrado con ID: ${hotelId}`);
+      return res.status(404).json({ message: 'Hotel no encontrado' });
     }
     
-    // Check if habitacion exists and belongs to the hotel
+    // si existe la habitacion y pertenece al hotel
     const habitacion = await Habitacion.findOne({ 
       where: { 
         id: habitacionId,
@@ -153,11 +152,11 @@ const createReserva = async (req, res) => {
     });
     
     if (!habitacion) {
-      logInteraction('POST', `Room not found with ID: ${habitacionId} for hotel: ${hotelId}`);
-      return res.status(404).json({ message: 'Room not found or does not belong to the specified hotel' });
+      logInteraction('POST', `Habitacion no encontrada con ID: ${habitacionId} para el hotel: ${hotelId}`);
+      return res.status(404).json({ message: 'Habitacion no encontrada o no pertence al hotel' });
     }
     
-    // Check if the room's capacity is sufficient
+   
     if (habitacion.capacidad < cantidadPersonas) {
       logInteraction('POST', `La capacidad de la habitación (${habitacion.capacidad}) es menos de lo requerido: ${cantidadPersonas}`);
       return res.status(400).json({ 
@@ -165,27 +164,27 @@ const createReserva = async (req, res) => {
       });
     }
     
-    // Check for conflicting reservations
+
     const conflictingReservations = await Reserva.findOne({
       where: {
         habitacionId,
         [Op.or]: [
           {
-            // New check-in date falls between an existing reservation
+          
             [Op.and]: [
               { fechaIngreso: { [Op.lte]: fechaIngreso } },
               { fechaSalida: { [Op.gt]: fechaIngreso } }
             ]
           },
           {
-            // New check-out date falls between an existing reservation
+         
             [Op.and]: [
               { fechaIngreso: { [Op.lt]: fechaSalida } },
               { fechaSalida: { [Op.gte]: fechaSalida } }
             ]
           },
           {
-            // Existing reservation falls entirely within new reservation
+            
             [Op.and]: [
               { fechaIngreso: { [Op.gte]: fechaIngreso } },
               { fechaSalida: { [Op.lte]: fechaSalida } }
@@ -196,20 +195,19 @@ const createReserva = async (req, res) => {
     });
     
     if (conflictingReservations) {
-      logInteraction('POST', `Conflicting reservation found for room: ${habitacionId}`);
-      return res.status(409).json({ message: 'Room is already booked for the selected dates' });
+      logInteraction('POST', `Conflicto en la reserva para la habitacion con ID: ${habitacionId}`);
+      return res.status(409).json({ message: 'La habitacion ya esta reservada en esas fechas' });
     }
-    
-    // Get or create the client
+
     try {
       if (!nombre || !apellido) {
-        logInteraction('POST', `Missing client name or surname for cedula: ${cedula}`);
-        return res.status(400).json({ message: 'Client name and surname are required' });
+        logInteraction('POST', `Falta el nombre y apellido del cliente con cedula: ${cedula}`);
+        return res.status(400).json({ message: 'Nombre y apellido del cliente es necesario' });
       }
       
       const cliente = await getOrCreateCliente(cedula, nombre, apellido);
       
-      // Create the reservation
+   
       const newReserva = await Reserva.create({
         hotelId,
         habitacionId,
@@ -219,9 +217,9 @@ const createReserva = async (req, res) => {
         cantidadPersonas
       });
       
-      logInteraction('POST', `Reservation created with ID: ${newReserva.id}`);
+      logInteraction('POST', `Reserva creada con ID: ${newReserva.id}`);
       
-      // Return the reservation with related data
+ 
       const reservaWithData = await Reserva.findByPk(newReserva.id, {
         include: [
           { model: Hotel, attributes: ['nombre', 'direccion'] },
@@ -232,8 +230,8 @@ const createReserva = async (req, res) => {
       
       res.status(201).json(reservaWithData);
     } catch (error) {
-      logInteraction('POST', `Error processing client: ${error.message}`);
-      res.status(500).json({ message: `Error processing client: ${error.message}` });
+      logInteraction('POST', `Error procesando cliente: ${error.message}`);
+      res.status(500).json({ message: `Error procesando cliente: ${error.message}` });
     }
   } catch (error) {
     logInteraction('POST', `Error: ${error.message}`);
@@ -241,7 +239,7 @@ const createReserva = async (req, res) => {
   }
 };
 
-// Find available rooms for booking
+
 const findAvailableRooms = async (req, res) => {
   try {
    // const { hotelId, checkIn: fechaIngreso, checkOut: fechaSalida, capacity: capacidad } = req.query;
@@ -254,11 +252,11 @@ const findAvailableRooms = async (req, res) => {
     
     // Validate required fields
     if (!hotelId || !fechaIngreso || !fechaSalida) {
-      logInteraction('GET', 'Missing required parameters');
-      return res.status(400).json({ message: 'Hotel ID, check-in date, and check-out date are required' });
+      logInteraction('GET', 'Faltan campos obligatorios');
+      return res.status(400).json({ message: 'Hotel ID, check-in, y check-out son requeridos' });
     }
     
-    // Find all rooms for the hotel
+
     const allRooms = await Habitacion.findAll({
       where: { 
         hotelId,
@@ -273,28 +271,28 @@ const findAvailableRooms = async (req, res) => {
       //return res.status(404).json({ message: 'Ninguna habitacion para esos criterios' });
     }
     
-    // Find all reservations that conflict with the requested dates
+    
     const bookedRoomIds = (await Reserva.findAll({
       attributes: ['habitacionId'],
       where: {
         hotelId,
         [Op.or]: [
           {
-            // New check-in date falls between an existing reservation
+
             [Op.and]: [
               { fechaIngreso: { [Op.lte]: fechaIngreso } },
               { fechaSalida: { [Op.gt]: fechaIngreso } }
             ]
           },
           {
-            // New check-out date falls between an existing reservation
+      
             [Op.and]: [
               { fechaIngreso: { [Op.lt]: fechaSalida } },
               { fechaSalida: { [Op.gte]: fechaSalida } }
             ]
           },
           {
-            // Existing reservation falls entirely within new reservation
+
             [Op.and]: [
               { fechaIngreso: { [Op.gte]: fechaIngreso } },
               { fechaSalida: { [Op.lte]: fechaSalida } }

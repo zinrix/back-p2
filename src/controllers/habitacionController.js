@@ -1,11 +1,11 @@
 const { Habitacion, Hotel } = require('../models');
 
-// Log interactions
+
 const logInteraction = (method, message) => {
   console.log(`[${new Date().toISOString()}] [Habitacion] [${method}] ${message}`);
 };
 
-// Get all rooms
+
 const getAllHabitaciones = async (req, res) => {
   try {
     const { hotelId } = req.query;
@@ -13,9 +13,9 @@ const getAllHabitaciones = async (req, res) => {
     
     if (hotelId) {
       query = { where: { hotelId } };
-      logInteraction('GET', `Getting all rooms for hotel with ID: ${hotelId}`);
+      logInteraction('GET', `Obteniendo todas las habitaciones con ID: ${hotelId}`);
     } else {
-      logInteraction('GET', 'Getting all rooms');
+      logInteraction('GET', 'Obteniendo todas las habitaciones');
     }
     
     const habitaciones = await Habitacion.findAll({
@@ -30,19 +30,19 @@ const getAllHabitaciones = async (req, res) => {
   }
 };
 
-// Get room by ID
+
 const getHabitacionById = async (req, res) => {
   try {
     const { id } = req.params;
-    logInteraction('GET', `Getting room with ID: ${id}`);
+    logInteraction('GET', `Habitacion con ID: ${id}`);
     
     const habitacion = await Habitacion.findByPk(id, {
       include: [{ model: Hotel, attributes: ['nombre', 'direccion'] }]
     });
     
     if (!habitacion) {
-      logInteraction('GET', `Room not found with ID: ${id}`);
-      return res.status(404).json({ message: 'Room not found' });
+      logInteraction('GET', `Habitacion no encontrada con ID: ${id}`);
+      return res.status(404).json({ message: 'Habitacion no encontrada' });
     }
     
     res.status(200).json(habitacion);
@@ -52,23 +52,23 @@ const getHabitacionById = async (req, res) => {
   }
 };
 
-// Create a new room
+
 const createHabitacion = async (req, res) => {
   try {
     const { numero, hotelId, posicionX, posicionY, piso, capacidad, caracteristicas } = req.body;
-    logInteraction('POST', `Creating room: ${numero} for hotel: ${hotelId}`);
+    logInteraction('POST', `Creando habitacion: ${numero} para el hotel: ${hotelId}`);
     
-    // Validate required fields
+ 
     if (!numero || !hotelId || posicionX === undefined || posicionY === undefined || !piso || !capacidad) {
-      logInteraction('POST', 'Missing required fields');
-      return res.status(400).json({ message: 'Missing required fields' });
+      logInteraction('POST', 'Faltan campos obligatorios');
+      return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
     
-    // Check if hotel exists
+    // existencia del hotel
     const hotel = await Hotel.findByPk(hotelId);
     if (!hotel) {
-      logInteraction('POST', `Hotel not found with ID: ${hotelId}`);
-      return res.status(404).json({ message: 'Hotel not found' });
+      logInteraction('POST', `Hotel no encontrado con ID: ${hotelId}`);
+      return res.status(404).json({ message: 'Hotel no encontrado' });
     }
     
     const newHabitacion = await Habitacion.create({
@@ -81,7 +81,7 @@ const createHabitacion = async (req, res) => {
       caracteristicas: caracteristicas || ''
     });
     
-    logInteraction('POST', `Room created with ID: ${newHabitacion.id}`);
+    logInteraction('POST', `Habitacion creada con ID: ${newHabitacion.id}`);
     res.status(201).json(newHabitacion);
   } catch (error) {
     logInteraction('POST', `Error: ${error.message}`);
@@ -89,26 +89,26 @@ const createHabitacion = async (req, res) => {
   }
 };
 
-// Update room
+
 const updateHabitacion = async (req, res) => {
   try {
     const { id } = req.params;
     const { numero, hotelId, posicionX, posicionY, piso, capacidad, caracteristicas } = req.body;
     
-    logInteraction('PUT', `Updating room with ID: ${id}`);
+    logInteraction('PUT', `Actualizar habitacion con ID: ${id}`);
     
     const habitacion = await Habitacion.findByPk(id);
     if (!habitacion) {
-      logInteraction('PUT', `Room not found with ID: ${id}`);
+      logInteraction('PUT', `Habitacion no encontrada con ID: ${id}`);
       return res.status(404).json({ message: 'Room not found' });
     }
     
-    // If hotel ID is provided, check if it exists
+  
     if (hotelId) {
       const hotel = await Hotel.findByPk(hotelId);
       if (!hotel) {
-        logInteraction('PUT', `Hotel not found with ID: ${hotelId}`);
-        return res.status(404).json({ message: 'Hotel not found' });
+        logInteraction('PUT', `Hotel no encontrado con ID: ${hotelId}`);
+        return res.status(404).json({ message: 'Hotel no encontrado' });
       }
     }
     
@@ -122,7 +122,7 @@ const updateHabitacion = async (req, res) => {
       caracteristicas: caracteristicas !== undefined ? caracteristicas : habitacion.caracteristicas
     });
     
-    logInteraction('PUT', `Room updated with ID: ${id}`);
+    logInteraction('PUT', `Habitacion actualizada con ID: ${id}`);
     res.status(200).json(habitacion);
   } catch (error) {
     logInteraction('PUT', `Error: ${error.message}`);
@@ -130,23 +130,23 @@ const updateHabitacion = async (req, res) => {
   }
 };
 
-// Delete room
+
 const deleteHabitacion = async (req, res) => {
   try {
     const { id } = req.params;
     
-    logInteraction('DELETE', `Deleting room with ID: ${id}`);
+    logInteraction('DELETE', `Borrando habitacion con ID: ${id}`);
     
     const habitacion = await Habitacion.findByPk(id);
     if (!habitacion) {
-      logInteraction('DELETE', `Room not found with ID: ${id}`);
-      return res.status(404).json({ message: 'Room not found' });
+      logInteraction('DELETE', `Habitacion no encontrada con ID: ${id}`);
+      return res.status(404).json({ message: 'Habitacion no encontrada' });
     }
     
     await habitacion.destroy();
     
-    logInteraction('DELETE', `Room deleted with ID: ${id}`);
-    res.status(200).json({ message: 'Room deleted successfully' });
+    logInteraction('DELETE', `Habitacion eliminada con ID: ${id}`);
+    res.status(200).json({ message: 'Habitacion eliminada con exito' });
   } catch (error) {
     logInteraction('DELETE', `Error: ${error.message}`);
     res.status(500).json({ message: error.message });
