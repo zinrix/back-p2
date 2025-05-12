@@ -1,6 +1,6 @@
 - para poder correr el proyecto hay que tener instalado: node.js 
 - intalar las dependencias necesarias \n
-npm install express sequelize pg pg-hstore cors body-parser dotenv
+npm install express sequelize pg pg-hstore cors body-parser dotenv <br>
 npm install --save-dev nodemon
 
 
