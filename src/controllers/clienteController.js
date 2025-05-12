@@ -33,7 +33,6 @@ const getClienteById = async (req, res) => {
   }
 };
 
-
 const getClienteByCedula = async (req, res) => {
   try {
     const { cedula } = req.params;
