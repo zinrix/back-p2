@@ -47,7 +47,6 @@ const Habitacion = sequelize.define('Habitacion', {
   tableName: 'habitaciones'
 });
 
-// Define relationship
 Habitacion.belongsTo(Hotel, { foreignKey: 'hotelId' });
 Hotel.hasMany(Habitacion, { foreignKey: 'hotelId' });
 

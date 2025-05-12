@@ -4,7 +4,7 @@ const Habitacion = require('./habitacion');
 const Cliente = require('./cliente');
 const Reserva = require('./reserva');
 
-// Initialize models
+
 const models = {
   Hotel,
   Habitacion,
@@ -13,7 +13,7 @@ const models = {
   sequelize
 };
 
-// Test connection
+
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
@@ -24,13 +24,13 @@ const testConnection = async () => {
   }
 };
 
-// Sync all models with database
+
 const syncDatabase = async (force = false) => {
   try {
     await sequelize.sync({ force });
-    console.log('Database synced successfully');
+    console.log('Base de datos sincronizada exitosamente');
   } catch (error) {
-    console.error('Error syncing database:', error);
+    console.error('Error sincronizando base de datos:', error);
     throw error;
   }
 };
@@ -38,5 +38,5 @@ const syncDatabase = async (force = false) => {
 module.exports = {
   ...models,
   syncDatabase,
-  testConnection // 👈 ahora sí está exportado
+  testConnection 
 };
