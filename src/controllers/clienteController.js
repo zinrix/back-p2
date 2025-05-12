@@ -1,14 +1,12 @@
 const { Cliente } = require('../models');
 
-// Log interactions
 const logInteraction = (method, message) => {
   console.log(`[${new Date().toISOString()}] [Cliente] [${method}] ${message}`);
 };
 
-// Get all customers
 const getAllClientes = async (req, res) => {
   try {
-    logInteraction('GET', 'Getting all customers');
+    logInteraction('GET', 'Obtener todos los clientes');
     const clientes = await Cliente.findAll();
     res.status(200).json(clientes);
   } catch (error) {
@@ -17,16 +15,15 @@ const getAllClientes = async (req, res) => {
   }
 };
 
-// Get customer by ID
 const getClienteById = async (req, res) => {
   try {
     const { id } = req.params;
-    logInteraction('GET', `Getting customer with ID: ${id}`);
+    logInteraction('GET', `Obtener cliente con ID: ${id}`);
     
     const cliente = await Cliente.findByPk(id);
     if (!cliente) {
-      logInteraction('GET', `Customer not found with ID: ${id}`);
-      return res.status(404).json({ message: 'Customer not found' });
+      logInteraction('GET', `Cliente no encontrado con ID: ${id}`);
+      return res.status(404).json({ message: 'Cliente no encontrado' });
     }
     
     res.status(200).json(cliente);
@@ -36,16 +33,16 @@ const getClienteById = async (req, res) => {
   }
 };
 
-// Get customer by cedula
+
 const getClienteByCedula = async (req, res) => {
   try {
     const { cedula } = req.params;
-    logInteraction('GET', `Getting customer with cedula: ${cedula}`);
+    logInteraction('GET', `Obtener cliente con cedula: ${cedula}`);
     
     const cliente = await Cliente.findOne({ where: { cedula } });
     if (!cliente) {
-      logInteraction('GET', `Customer not found with cedula: ${cedula}`);
-      return res.status(404).json({ message: 'Customer not found' });
+      logInteraction('GET', `Cliente no encontrado con cedula: ${cedula}`);
+      return res.status(404).json({ message: 'Cliente no encontrado' });
     }
     
     res.status(200).json(cliente);
@@ -55,31 +52,31 @@ const getClienteByCedula = async (req, res) => {
   }
 };
 
-// Create a new customer
+
 const createCliente = async (req, res) => {
   try {
     const { cedula, nombre, apellido } = req.body;
-    logInteraction('POST', `Creating customer with cedula: ${cedula}`);
+    logInteraction('POST', `Creando cliente con cedula: ${cedula}`);
     
     // Validate required fields
     if (!cedula || !nombre || !apellido) {
-      logInteraction('POST', 'Missing required fields');
-      return res.status(400).json({ message: 'All fields (cedula, nombre, apellido) are required' });
+      logInteraction('POST', 'Faltan campos obligatorios');
+      return res.status(400).json({ message: 'Los campos (cedula, nombre, apellido) son obligatorios' });
     }
     
     // Check if customer already exists
     const existingCliente = await Cliente.findOne({ where: { cedula } });
     if (existingCliente) {
-      logInteraction('POST', `Customer already exists with cedula: ${cedula}`);
+      logInteraction('POST', `Ya existe cliente con cedula: ${cedula}`);
       return res.status(409).json({ 
-        message: 'Customer already exists with this cedula',
+        message: 'Ya existe cliente con esa cedula',
         cliente: existingCliente
       });
     }
     
     const newCliente = await Cliente.create({ cedula, nombre, apellido });
     
-    logInteraction('POST', `Customer created with ID: ${newCliente.id}`);
+    logInteraction('POST', `Cliente creado con ID: ${newCliente.id}`);
     res.status(201).json(newCliente);
   } catch (error) {
     logInteraction('POST', `Error: ${error.message}`);
