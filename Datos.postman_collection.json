@@ -1,0 +1,217 @@
+{
+	"info": {
+		"_postman_id": "22bafed7-3070-408c-b386-723edbb1fc5a",
+		"name": "Datos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44893251",
+		"_collection_link": "https://zinri-2308687.postman.co/workspace/zinri's-Workspace~7b7471fd-6c35-42f5-89e1-9d9549a87048/collection/44893251-22bafed7-3070-408c-b386-723edbb1fc5a?action=share&source=collection_link&creator=44893251"
+	},
+	"item": [
+		{
+			"name": "hoteles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/hoteles",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"hoteles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clientes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/clientes",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hotel1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n{\r\n    \"nombre\": \"Bourbon\",\r\n    \"direccion\": \"av sudamericana\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/hoteles",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"hoteles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hotel2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Sheraton\",\r\n    \"direccion\": \"av santa teresa\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/hoteles",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"hoteles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cliente",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"cedula\": \"123\",\r\n        \"nombre\": \"alice\",\r\n        \"apellido\":\"hola\"\r\n }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/clientes",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "habitacion1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"numero\": \"110\",\r\n        \"hotelId\": 1,\r\n        \"posicionX\": 3,\r\n        \"posicionY\": 6,\r\n        \"piso\": \"1\",\r\n        \"capacidad\": 2,\r\n        \"caracteristicas\": \"Frigobar, 2 sommier, TV, Aire acondicionado\"\r\n\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/habitaciones",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"habitaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "habitacion2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"numero\": \"102\",\r\n        \"hotelId\": 1,\r\n        \"posicionX\": 12,\r\n        \"posicionY\": 6,\r\n        \"piso\": \"PB\",\r\n        \"capacidad\": 3,\r\n        \"caracteristicas\": \"Cocina pequeña, 3 camas individuales, TV\"\r\n }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/habitaciones",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"habitaciones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "habitacion3",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n        \"numero\": \"204\",\r\n        \"hotelId\": 2,\r\n        \"posicionX\": 4,\r\n        \"posicionY\": 3,\r\n        \"piso\": \"1\",\r\n        \"capacidad\": 2,\r\n        \"caracteristicas\": \"1 cama king size, TV, balcón\"\r\n\r\n }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/habitaciones",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"habitaciones"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
